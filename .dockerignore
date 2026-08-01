@@ -1,0 +1,9 @@
+.git
+.venv
+**pycache**
+*.pyc
+.pytest_cache
+.ruff_cache
+reports
+docs
+.python-version
