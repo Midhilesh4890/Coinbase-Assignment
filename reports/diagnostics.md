@@ -1,19 +1,24 @@
 # Learning curve
 
+Pipeline: tfidf_logreg_tuned
+
 | fraction | train_macro_f1 | val_macro_f1 | gap |
 | --- | --- | --- | --- |
-| 0.25 | 1.0 | 0.655 | 0.345 |
-| 0.5 | 1.0 | 0.8825000000000001 | 0.11749999999999994 |
-| 0.75 | 1.0 | 0.9349999999999999 | 0.06500000000000006 |
-| 1.0 | 1.0 | 0.9650000000000001 | 0.03499999999999992 |
+| 0.2500 | 1.0000 | 0.6975 | 0.3025 |
+| 0.5000 | 1.0000 | 0.9050 | 0.0950 |
+| 0.7500 | 1.0000 | 0.9450 | 0.0550 |
+| 1.0000 | 1.0000 | 0.9850 | 0.0150 |
 
 # McNemar test
 
 | name_a | name_b | errors_a | errors_b | b01 | b10 | p_value |
 | --- | --- | --- | --- | --- | --- | --- |
 | tfidf_logreg | tfidf_logreg_balanced | 16 | 14 | 4 | 2 | 0.6875 |
+| tfidf_logreg_balanced | tfidf_logreg_tuned | 14 | 6 | 8 | 0 | 0.0078 |
 
 # Novel message check
+
+Pipeline: tfidf_logreg_tuned
 
 | text | expected | predicted | correct |
 | --- | --- | --- | --- |
