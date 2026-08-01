@@ -1,9 +1,10 @@
 .git
 .venv
-**pycache**
+**__pycache__
 *.pyc
 .pytest_cache
 .ruff_cache
 reports
 docs
 .python-version
+

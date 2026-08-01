@@ -13,6 +13,7 @@ FROM python:3.13-slim
 WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
 ENV PATH="/app/.venv/bin:$PATH"
+ENV PROJECT_ROOT=/app
 COPY src ./src
 COPY scripts ./scripts
 COPY data ./data
