@@ -3,34 +3,42 @@
 This classifies a customer support message into one of four routes, account-access, transaction-dispute, fraud-report, general. The model is TF-IDF with unigrams plus logistic regression with balanced class weights. Macro F1 is 0.972 from nested cross validation. Fraud-report recall is 1.000.
 
 ## Setup
-    uv sync
+```bash
+uv sync
+```
 
 ## Predict one message
-    from models.predict import predict
-    predict("someone moved my coins to a wallet I don't recognise")
+```python
+from models.predict import predict
+predict("someone moved my coins to a wallet I don't recognise")
+```
 
 ## Score a CSV
 The input CSV needs a text column and the output adds a predicted_label column.
-    uv run python scripts/score_holdout.py data/sample_holdout.csv reports/predictions.csv
+```bash
+uv run python scripts/score_holdout.py data/sample_holdout.csv reports/predictions.csv
+```
 
 The published image can do the same without installing anything.
-    docker run --rm midhileshmomidi489/coinbase-assessment:latest
+```bash
+docker run --rm midhileshmomidi489/coinbase-assessment:latest
+```
 
 ## Tests
-    uv run pytest tests --cov --cov-report=term-missing
-    uv run ruff check .
+```bash
+uv run pytest tests --cov --cov-report=term-missing
+uv run ruff check .
+```
 
 There are 33 tests and coverage is enforced at 90 percent over src. plots.py and tuning.py are excluded because plotting has nothing useful to assert and the grid search fits hundreds of models.
 
 ## Reproduce the analysis
-    uv run python scripts/run_analysis.py
-Run class balance, duplication, plots.
-    uv run python scripts/train.py
-Run cross validation for all three pipelines.
-    uv run python scripts/tune.py
-Run grid search and nested CV.
-    uv run python scripts/run_diagnostics.py
-Run learning curve, McNemar, novel messages.
+```bash
+uv run python scripts/run_analysis.py      # class balance, duplication, plots
+uv run python scripts/train.py             # cross validation for all three pipelines
+uv run python scripts/tune.py              # grid search and nested CV
+uv run python scripts/run_diagnostics.py   # learning curve, McNemar, novel messages
+```
 
 Everything is seeded with random_state 42.
 
@@ -60,9 +68,9 @@ To catch this in production you track per class recall, not accuracy, and watch 
 | tfidf_logreg_balanced | 0.9627 | 0.062 | 1.000 | 14 |
 | tfidf_logreg_tuned | 0.9862 | 0.020 | 1.000 | 6 |
 
-tfidf_logreg_tuned is the shipped model. The full log is in reports/experiments.csv.
+ tfidf_logreg_tuned is the shipped model. The full log is in reports/experiments.csv.
 
-A 30 point grid over ngram_range, C and sublinear_tf is in reports/tuning.md. Unigrams beat bigrams and trigrams in every configuration. Bigrams learn template phrasing like stuck in pending as a unit and that does not transfer to an unseen template. Dropping them cut transaction-dispute to account-access errors from 8 to 2 and cut fold variance by three times.
+A 30 point grid over ngram_range, C and sublinear_tf is in reports/tuning.md. Unigrams beat bigrams and trigrams in every configuration. Bigrams learn template phrasing like `stuck in pending` as a unit and that does not transfer to an unseen template. Dropping them cut transaction-dispute to account-access errors from 8 to 2 and cut fold variance by three times.
 
 The grid was selected on the same folds it was scored on, so nested cross validation gives the unbiased number, 0.972 plus or minus 0.043. All five outer folds picked unigrams on their own. The headline number is 0.972, not 0.9862.
 
