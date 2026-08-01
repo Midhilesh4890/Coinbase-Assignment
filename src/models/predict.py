@@ -16,3 +16,11 @@ def predict(text, model=None):
     if model is None:
         model = load_model()
     return model.predict([text])[0]
+
+
+def predict_frame(df, model=None):
+    if model is None:
+        model = load_model()
+    result = df.copy()
+    result["predicted_label"] = model.predict(result["text"])
+    return result
