@@ -12,4 +12,3 @@ def train_final(name="tfidf_logreg_tuned"):
     config.ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, config.MODEL_PATH)
     return model
-
