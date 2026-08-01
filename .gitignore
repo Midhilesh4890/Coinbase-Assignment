@@ -10,6 +10,4 @@ wheels/
 .venv
 .pytest_cache/
 .ruff_cache/
-artifacts/
-*.joblib
 .DS_Store
