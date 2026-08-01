@@ -4,7 +4,7 @@ from models.evaluate import confusion, cross_validate, log_experiment
 
 def main():
     data = load_dataset()
-    for name in ["tfidf_logreg", "tfidf_logreg_balanced"]:
+    for name in ["tfidf_logreg", "tfidf_logreg_balanced", "tfidf_logreg_tuned"]:
         result = cross_validate(data, name)
         print(name)
         print(result["macro_f1_mean"])
@@ -18,3 +18,4 @@ def main():
 
 
 main()
+
