@@ -9,6 +9,7 @@ dependencies = [
     "matplotlib>=3.11.1",
     "numpy",
     "pandas",
+    "pytest-cov>=7.1.0",
     "pytest>=9.1.1",
     "ruff>=0.16.1",
     "scikit-learn",
@@ -24,6 +25,14 @@ packages = ["src/common", "src/models", "src/preprocessing", "src/feature_engine
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/statistical_analysis/plots.py", "*/models/tuning.py"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
 
 [tool.ruff]
 line-length = 110
