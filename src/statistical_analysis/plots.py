@@ -2,9 +2,9 @@ import matplotlib
 
 matplotlib.use("Agg")
 
-import matplotlib.pyplot as plt
-
 from pathlib import Path
+
+import matplotlib.pyplot as plt
 
 from preprocessing.dedup import template_key
 

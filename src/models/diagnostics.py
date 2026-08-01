@@ -1,5 +1,5 @@
-from scipy.stats import binomtest
 import pandas as pd
+from scipy.stats import binomtest
 
 from feature_engineering.pipeline import build_pipeline
 from preprocessing.data import load_dataset
@@ -39,7 +39,12 @@ def learning_curve(df, name, fractions=(0.25, 0.5, 0.75, 1.0), n_splits=5):
             val_scores.append(pd.Series(val_df["label"]).eq(val_pred).mean())
         train_macro_f1 = sum(train_scores) / len(train_scores) if train_scores else 0
         val_macro_f1 = sum(val_scores) / len(val_scores) if val_scores else 0
-        rows.append({"fraction": fraction, "train_macro_f1": train_macro_f1, "val_macro_f1": val_macro_f1, "gap": train_macro_f1 - val_macro_f1})
+        rows.append({
+            "fraction": fraction,
+            "train_macro_f1": train_macro_f1,
+            "val_macro_f1": val_macro_f1,
+            "gap": train_macro_f1 - val_macro_f1,
+        })
     return pd.DataFrame(rows)
 
 
@@ -81,4 +86,9 @@ def novel_message_check(name, model=None):
     texts = [item[0] for item in messages]
     expected = [item[1] for item in messages]
     predicted = model.predict(texts)
-    return pd.DataFrame({"text": texts, "expected": expected, "predicted": predicted, "correct": [a == b for a, b in zip(expected, predicted)]})
+    return pd.DataFrame({
+        "text": texts,
+        "expected": expected,
+        "predicted": predicted,
+        "correct": [a == b for a, b in zip(expected, predicted, strict=False)],
+    })

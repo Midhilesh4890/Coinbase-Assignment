@@ -1,5 +1,4 @@
 import pandas as pd
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, recall_score
@@ -45,7 +44,10 @@ def _grid_values():
 
 def _build_pipeline(ngram_range, C, sublinear_tf):
     return Pipeline([
-        ("tfidf", TfidfVectorizer(lowercase=True, ngram_range=ngram_range, min_df=1, sublinear_tf=sublinear_tf)),
+        (
+            "tfidf",
+            TfidfVectorizer(lowercase=True, ngram_range=ngram_range, min_df=1, sublinear_tf=sublinear_tf),
+        ),
         ("clf", LogisticRegression(max_iter=1000, random_state=42, C=C, class_weight="balanced")),
     ])
 
@@ -61,14 +63,22 @@ def _score_combination(df, n_splits, seed, ngram_range, C, sublinear_tf):
         model.fit(train_df["text"], train_df["label"])
         pred = model.predict(val_df["text"])
         macro_f1_scores.append(f1_score(val_df["label"], pred, average="macro"))
-        fraud_recall_scores.append(recall_score(val_df["label"], pred, labels=["fraud-report"], average="macro", zero_division=0))
-    return sum(macro_f1_scores) / len(macro_f1_scores), pd.Series(macro_f1_scores).std(), sum(fraud_recall_scores) / len(fraud_recall_scores)
+        fraud_recall_scores.append(
+            recall_score(val_df["label"], pred, labels=["fraud-report"], average="macro", zero_division=0)
+        )
+    return (
+        sum(macro_f1_scores) / len(macro_f1_scores),
+        pd.Series(macro_f1_scores).std(),
+        sum(fraud_recall_scores) / len(fraud_recall_scores),
+    )
 
 
 def grid_search(df, n_splits=5):
     rows = []
     for ngram_range, C, sublinear_tf in _grid_values():
-        macro_f1_mean, macro_f1_std, fraud_recall = _score_combination(df, n_splits, 42, ngram_range, C, sublinear_tf)
+        macro_f1_mean, macro_f1_std, fraud_recall = _score_combination(
+            df, n_splits, 42, ngram_range, C, sublinear_tf
+        )
         rows.append({
             "ngram_range": ngram_range,
             "C": C,
@@ -78,7 +88,9 @@ def grid_search(df, n_splits=5):
             "fraud_recall": fraud_recall,
         })
     result = pd.DataFrame(rows)
-    return result.sort_values(["macro_f1_mean", "macro_f1_std"], ascending=[False, True]).reset_index(drop=True)
+    return (
+        result.sort_values(["macro_f1_mean", "macro_f1_std"], ascending=[False, True]).reset_index(drop=True)
+    )
 
 
 def nested_cv(df, n_splits=5, inner_splits=4, inner_seed=1):
@@ -92,7 +104,9 @@ def nested_cv(df, n_splits=5, inner_splits=4, inner_seed=1):
         best_score = None
         best_combo = None
         for ngram_range, C, sublinear_tf in grid:
-            score, _, _ = _score_combination(outer_train, inner_splits, inner_seed, ngram_range, C, sublinear_tf)
+            score, _, _ = _score_combination(
+                outer_train, inner_splits, inner_seed, ngram_range, C, sublinear_tf
+            )
             combo = (ngram_range, C, sublinear_tf)
             if best_score is None or score > best_score:
                 best_score = score

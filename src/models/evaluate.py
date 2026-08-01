@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -22,7 +22,9 @@ def cross_validate(df, name, n_splits=5):
         pred = model.predict(val_df["text"])
         pooled.iloc[val_index] = pred
         macro_f1 = f1_score(val_df["label"], pred, average="macro")
-        fraud_recall = recall_score(val_df["label"], pred, labels=["fraud-report"], average="macro", zero_division=0)
+        fraud_recall = recall_score(
+            val_df["label"], pred, labels=["fraud-report"], average="macro", zero_division=0
+        )
         macro_f1_scores.append(macro_f1)
         fraud_recall_scores.append(fraud_recall)
         per_fold.append({"fold": fold, "macro_f1": macro_f1, "fraud_recall": fraud_recall})
@@ -56,7 +58,7 @@ def log_experiment(result):
     path = Path("reports/experiments.csv")
     path.parent.mkdir(parents=True, exist_ok=True)
     row = pd.DataFrame([{
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "name": result["name"],
         "macro_f1_mean": result["macro_f1_mean"],
         "macro_f1_std": result["macro_f1_std"],

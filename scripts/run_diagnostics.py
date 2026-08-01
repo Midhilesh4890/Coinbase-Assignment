@@ -1,5 +1,6 @@
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 from models.diagnostics import learning_curve, mcnemar, novel_message_check
 from preprocessing.data import load_dataset

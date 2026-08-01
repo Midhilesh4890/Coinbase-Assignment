@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from preprocessing.data import load_dataset
 from models.tuning import grid_search, nested_cv
+from preprocessing.data import load_dataset
 
 
 def _markdown_table(df):

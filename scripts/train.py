@@ -1,5 +1,5 @@
-from preprocessing.data import load_dataset
 from models.evaluate import confusion, cross_validate, log_experiment
+from preprocessing.data import load_dataset
 
 
 def main():

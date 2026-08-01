@@ -10,6 +10,7 @@ dependencies = [
     "numpy",
     "pandas",
     "pytest>=9.1.1",
+    "ruff>=0.16.1",
     "scikit-learn",
     "scipy>=1.18.0",
 ]
@@ -24,3 +25,9 @@ packages = ["src/common", "src/models", "src/preprocessing", "src/feature_engine
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
+[tool.ruff]
+line-length = 110
+src = ["src", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
