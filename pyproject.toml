@@ -11,6 +11,7 @@ dependencies = [
     "pandas",
     "pytest>=9.1.1",
     "scikit-learn",
+    "scipy>=1.18.0",
 ]
 
 [build-system]
