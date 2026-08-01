@@ -10,8 +10,16 @@ def _tfidf_logreg():
     ])
 
 
+def _tfidf_logreg_balanced():
+    return Pipeline([
+        ("tfidf", TfidfVectorizer(lowercase=True, ngram_range=(1, 2), min_df=1, sublinear_tf=True)),
+        ("logreg", LogisticRegression(max_iter=1000, random_state=42, class_weight="balanced")),
+    ])
+
+
 PIPELINES = {
     "tfidf_logreg": _tfidf_logreg,
+    "tfidf_logreg_balanced": _tfidf_logreg_balanced,
 }
 
 

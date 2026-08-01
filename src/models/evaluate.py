@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
-from sklearn.metrics import classification_report, f1_score, recall_score
+from sklearn.metrics import classification_report, confusion_matrix, f1_score, recall_score
 
 from feature_engineering.pipeline import build_pipeline
 from preprocessing.splits import group_folds
@@ -36,6 +36,20 @@ def cross_validate(df, name, n_splits=5):
         "per_fold": per_fold,
         "report": report,
     }
+
+
+def confusion(df, name, n_splits=5):
+    folds = group_folds(df, n_splits=n_splits)
+    pooled = pd.Series(index=df.index, dtype=object)
+    for train_index, val_index in folds:
+        model = build_pipeline(name)
+        train_df = df.iloc[train_index]
+        val_df = df.iloc[val_index]
+        model.fit(train_df["text"], train_df["label"])
+        pooled.iloc[val_index] = model.predict(val_df["text"])
+    labels = sorted(df["label"].unique())
+    matrix = confusion_matrix(df["label"], pooled, labels=labels)
+    return pd.DataFrame(matrix, index=labels, columns=labels)
 
 
 def log_experiment(result):
