@@ -15,3 +15,6 @@ wheels/
 *.env
 predictions.csv
 *.tmp
+.coverage
+coverage.xml
+htmlcov/
