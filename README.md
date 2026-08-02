@@ -3,6 +3,7 @@
 This classifies a customer support message into one of four routes, account-access, transaction-dispute, fraud-report, general. The model is TF-IDF with unigrams plus logistic regression with balanced class weights. Macro F1 is 0.972 from nested cross validation. Fraud-report recall is 1.000.
 
 ## Setup
+uv can be installed from https://docs.astral.sh/uv/ and the project needs Python 3.13. uv will fetch it if it is missing.
 ```bash
 uv sync
 ```
@@ -13,16 +14,27 @@ from models.predict import predict
 predict("someone moved my coins to a wallet I don't recognise")
 ```
 
-## Score a CSV
-The input CSV needs a text column and the output adds a predicted_label column.
-```bash
-uv run python scripts/score_holdout.py data/sample_holdout.csv reports/predictions.csv
-```
+## Score a holdout CSV
+The trained model is committed at artifacts/model.joblib, so there is no need to train anything first.
+The input CSV needs a column named text, any other columns are passed through untouched, and the output is the same rows with a predicted_label column added.
 
-The published image can do the same without installing anything.
+### Locally
 ```bash
-docker run --rm midhileshmomidi489/coinbase-assessment:latest
+uv sync
+uv run python scripts/score_holdout.py your_holdout.csv predictions.csv
 ```
+It prints the row count and the output path when it finishes.
+
+### With Docker
+The image is at https://hub.docker.com/r/midhileshmomidi489/coinbase-assessment and needs no local Python or uv. The folder holding the CSV must be mounted so the output comes back to the host.
+```bash
+docker run --rm -v "$(pwd)":/work \
+  midhileshmomidi489/coinbase-assessment:latest \
+  python scripts/score_holdout.py /work/your_holdout.csv /work/predictions.csv
+```
+On Windows PowerShell use ${PWD} instead of $(pwd).
+On Linux, if the write fails with a permission error, add --user $(id -u):$(id -g) because the image runs as a non-root user.
+Running the image with no arguments scores the bundled sample file and prints the row count, which is what CI uses as a smoke test.
 
 ## Tests
 ```bash
